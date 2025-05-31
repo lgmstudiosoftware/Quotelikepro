@@ -5,6 +5,7 @@ interface PricingRuleItem {
     name: string
     type: AdjustmentType
     value: number
+    options?: PricingRuleItem
 }
 
 interface PricingRules {

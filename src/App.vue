@@ -4,21 +4,24 @@
             <BaseSelect
                 label="Категория продукта"
                 :items="pricingRules.categories"
-                v-model="defaultFormValues.category"
+                v-model="defaultFormValues.category.value"
             />
 
             <BaseSelect
                 label="Выбор цвета"
                 :items="pricingRules.colors"
-                v-model="defaultFormValues.color"
+                v-model="defaultFormValues.color.value"
+                v-model:subValue="defaultFormValues.color.option"
             />
 
             <BaseSelect
                 label="Выбор локации"
                 :items="pricingRules.locations"
-                v-model="defaultFormValues.location"
+                v-model="defaultFormValues.location.value"
             />
         </form>
+
+        {{defaultFormValues.color}}
     </div>
 </template>
 
@@ -26,16 +29,28 @@
 import { ref } from 'vue'
 import BaseSelect from '@/components/BaseSelect.vue'
 
+interface DefaultFormValue {
+    value: number
+    option?: number
+}
+
 interface DefaultFormValues {
-    category: number
-    color: number
-    location: number
+    category: DefaultFormValue
+    color: DefaultFormValue
+    location: DefaultFormValue
 }
 
 const defaultFormValues = ref<DefaultFormValues>({
-    category: 1,
-    color: 1,
-    location: 1
+    category: {
+        value: 1
+    },
+    color: {
+        value: 1,
+        option: 2,
+    },
+    location: {
+        value: 1
+    }
 })
 
 const pricingRules = ref<PricingRules>({
@@ -47,7 +62,12 @@ const pricingRules = ref<PricingRules>({
     colors: [
         {id: 1, name: 'Белый', type: 'none', value: 0},
         {id: 2, name: 'Красный', type: 'markup', value: 3},
-        {id: 3, name: 'Черный', type: 'none', value: 0}
+        {id: 3, name: 'Черный', type: 'none', value: 0, options: [
+                {id: 1, name: 'S', type: 'none', value: 0},
+                {id: 2, name: 'M', type: 'markup', value: 4},
+                {id: 3, name: 'L', type: 'markup', value: 5},
+            ]
+        }
     ],
     locations: [
         {id: 1, name: 'Киев', type: 'markup', value: 2},
