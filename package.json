@@ -1,0 +1,36 @@
+{
+  "name": "vue-tailwind-docker",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "test": "vitest",
+    "type-check": "vue-tsc --noEmit",
+    "lint": "eslint . --ext .ts,.vue",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "@vue/test-utils": "^2.4.1",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-vue": "^9.20.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "jsdom": "^22.0.0",
+    "postcss": "^8.4.0",
+    "prettier": "^3.2.5",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vitest": "^1.0.0",
+    "vue-tsc": "^1.8.11",
+    "@vitejs/plugin-vue": "^5.0.0"
+  }
+}
