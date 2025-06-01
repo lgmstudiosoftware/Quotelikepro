@@ -4,7 +4,7 @@ import { usePriceCalculator } from '@/composables/usePriceCalculator'
 describe('usePriceCalculator', () => {
     const { calculatePrice } = usePriceCalculator()
 
-    it('should apply category markup, color option markup, location discount, seller discount, and volume discount correctly', () => {
+    it('Применение наценки, скидки для категории, цвета, опции, города, продавца и количества > 10 - успешны', () => {
         const input = {
             basePrice: 1000,
             quantity: 12,

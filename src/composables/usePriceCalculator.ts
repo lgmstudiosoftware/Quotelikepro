@@ -59,21 +59,13 @@ export function usePriceCalculator() {
             apply(`Локация: ${locRule.name}`, locRule.type, locRule.value);
         }
 
-        if (quantity > 10) {
-            const volumeDiscountPercent = 5
-            const delta = (finalUnitPrice * volumeDiscountPercent) / 100
-            finalUnitPrice -= delta
-            adjustments.push({
-                label: `Объемная скидка (${quantity} шт.)`,
-                type: 'discount',
-                value: volumeDiscountPercent,
-                amount: delta
-            })
-        }
-
         const sellerRule = pricingRules.sellers?.find(r => r.id === sellerId)
         if (sellerRule) {
             apply(`Скидка продавца`, sellerRule.type, sellerRule.value)
+        }
+
+        if (quantity > 10) {
+            apply(`Объемная скидка (${quantity} шт.)`, 'discount', 5)
         }
 
         return {
