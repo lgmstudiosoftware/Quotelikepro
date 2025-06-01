@@ -4,6 +4,11 @@ interface CalculatePriceInput {
     basePrice: number
     quantity: number
     city: number
+    category: number
+    color: {
+        value: number
+        option?: number
+    }
 }
 
 interface Adjustment {
@@ -14,15 +19,39 @@ interface Adjustment {
 }
 
 export function usePriceCalculator() {
-    const calculatePrice = ({ basePrice, quantity, city }: CalculatePriceInput) => {
+    const calculatePrice = ({ basePrice, quantity, category, city, color }: CalculatePriceInput) => {
         let finalUnitPrice = basePrice;
         const adjustments: Adjustment[] = [];
 
         const apply = (label: string, type: 'markup' | 'discount', value: number) => {
-            const delta = (basePrice * value) / 100;
-            finalUnitPrice += type === 'markup' ? delta : -delta;
+            let delta = 0;
+
+            if (type === 'markup') {
+                const newPrice = +(finalUnitPrice / (1 - value / 100));
+                delta = newPrice - finalUnitPrice;
+                finalUnitPrice = newPrice;
+            } else {
+                delta = (finalUnitPrice * value) / 100;
+                finalUnitPrice -= delta;
+            }
+
             adjustments.push({ label, type, value, amount: delta });
         };
+
+        const catRule = pricingRules.categories.find(r => r.id === category);
+        if (catRule) {
+            apply(`Категория: ${catRule.name}`, catRule.type, catRule.value);
+        }
+
+        const colorRule = pricingRules.colors.find(r => r.id === color.value)
+        if (colorRule) {
+            apply(`Цвет: ${colorRule.name}`, colorRule.type, colorRule.value)
+
+            const option = colorRule.options?.find(o => o.id === color.option)
+            if (option) {
+                apply(`Опция цвета: ${option.name}`, option.type, option.value)
+            }
+        }
 
         const locRule = pricingRules.locations.find(r => r.id === city);
         if (locRule) {

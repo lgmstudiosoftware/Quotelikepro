@@ -31,7 +31,7 @@
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required
                     min="1"
-                    max="10"
+                    max="100"
                     value="1"
                 />
             </div>
@@ -51,7 +51,9 @@
             <h3 class="font-bold mb-1">Результат:</h3>
             <ul>
                 <li v-for="adj in result.adjustments" :key="adj.label">
-                    {{ adj.label }} <span v-if="adj.value > 0">({{ adj.type === 'markup' ? '+' : '-' }}{{ adj.value }}%) → {{ adj.amount.toFixed(2) }} грн</span>
+                    {{ adj.label }} <span v-if="adj.value > 0">({{ adj.type === 'markup' ? '+' : '-' }}{{ adj.value }}%) → {{
+                        adj.amount.toFixed(2)
+                    }} грн</span>
                 </li>
             </ul>
             <p>Цена за единицу: {{ result.unitPrice }} грн</p>
@@ -99,10 +101,17 @@ const result = ref<ReturnType<ReturnType<typeof usePriceCalculator>['calculatePr
 const { calculatePrice } = usePriceCalculator();
 
 const handleCalculate = () => {
-    result.value = calculatePrice({
-        basePrice: defaultFormValues.value.basePrice,
-        city: defaultFormValues.value.location.value,
-        quantity: defaultFormValues.value.quantity,
-    });
+    result.value = calculatePrice(
+        {
+            category: defaultFormValues.value.category.value,
+            color: {
+                value: defaultFormValues.value.color.value,
+                option: defaultFormValues.value.color.option,
+            },
+            city: defaultFormValues.value.location.value,
+            basePrice: defaultFormValues.value.basePrice,
+            quantity: defaultFormValues.value.quantity,
+        }
+    );
 }
 </script>
