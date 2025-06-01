@@ -9,6 +9,7 @@ interface CalculatePriceInput {
         value: number
         option?: number
     }
+    sellerId: string
 }
 
 interface Adjustment {
@@ -19,7 +20,7 @@ interface Adjustment {
 }
 
 export function usePriceCalculator() {
-    const calculatePrice = ({ basePrice, quantity, category, city, color }: CalculatePriceInput) => {
+    const calculatePrice = ({ basePrice, quantity, category, city, color, sellerId }: CalculatePriceInput) => {
         let finalUnitPrice = basePrice;
         const adjustments: Adjustment[] = [];
 
@@ -56,6 +57,23 @@ export function usePriceCalculator() {
         const locRule = pricingRules.locations.find(r => r.id === city);
         if (locRule) {
             apply(`Локация: ${locRule.name}`, locRule.type, locRule.value);
+        }
+
+        if (quantity > 10) {
+            const volumeDiscountPercent = 5
+            const delta = (finalUnitPrice * volumeDiscountPercent) / 100
+            finalUnitPrice -= delta
+            adjustments.push({
+                label: `Объемная скидка (${quantity} шт.)`,
+                type: 'discount',
+                value: volumeDiscountPercent,
+                amount: delta
+            })
+        }
+
+        const sellerRule = pricingRules.sellers?.find(r => r.id === sellerId)
+        if (sellerRule) {
+            apply(`Скидка продавца`, sellerRule.type, sellerRule.value)
         }
 
         return {

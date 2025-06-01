@@ -111,6 +111,7 @@ const handleCalculate = () => {
             city: defaultFormValues.value.location.value,
             basePrice: defaultFormValues.value.basePrice,
             quantity: defaultFormValues.value.quantity,
+            sellerId: 'VIP'
         }
     );
 }

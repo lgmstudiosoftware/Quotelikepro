@@ -18,5 +18,8 @@ export const pricingRules = {
         {id: 1, name: 'Киев', type: 'markup', value: 2},
         {id: 2, name: 'Львов', type: 'discount', value: 3},
         {id: 3, name: 'Одесса', type: 'none', value: 0}
+    ],
+    sellers: [
+        { id: 'VIP', type: 'discount', value: 2 }
     ]
 }
