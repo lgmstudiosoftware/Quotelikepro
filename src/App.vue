@@ -1,6 +1,9 @@
 <template>
     <div class="p-6 max-w-2xl mx-auto">
-        <form class="space-y-4">
+        <form
+            class="space-y-4"
+            @submit.prevent="handleCalculate"
+        >
             <BaseSelect
                 label="Категория продукта"
                 :items="pricingRules.categories"
@@ -19,15 +22,49 @@
                 :items="pricingRules.locations"
                 v-model="defaultFormValues.location.value"
             />
+
+            <div class="flex flex-col gap-2">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select a quantity:</label>
+                <input
+                    v-model="defaultFormValues.quantity"
+                    type="number"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required
+                    min="1"
+                    max="10"
+                    value="1"
+                />
+            </div>
+
+            <button
+                type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            >
+                Расчитать
+            </button>
         </form>
 
-        {{defaultFormValues.color}}
+        <div
+            v-if="result"
+            class="mt-6 border border-dashed p-4 rounded-lg"
+        >
+            <h3 class="font-bold mb-1">Результат:</h3>
+            <ul>
+                <li v-for="adj in result.adjustments" :key="adj.label">
+                    {{ adj.label }} <span v-if="adj.value > 0">({{ adj.type === 'markup' ? '+' : '-' }}{{ adj.value }}%) → {{ adj.amount.toFixed(2) }} грн</span>
+                </li>
+            </ul>
+            <p>Цена за единицу: {{ result.unitPrice }} грн</p>
+            <p>Стоимость: {{ result.totalPrice }} грн</p>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import BaseSelect from '@/components/BaseSelect.vue'
+import { pricingRules } from '@/config/pricingRules';
+import { usePriceCalculator } from '@/composables/usePriceCalculator';
 
 interface DefaultFormValue {
     value: number
@@ -38,6 +75,8 @@ interface DefaultFormValues {
     category: DefaultFormValue
     color: DefaultFormValue
     location: DefaultFormValue
+    basePrice: number
+    quantity: number
 }
 
 const defaultFormValues = ref<DefaultFormValues>({
@@ -50,29 +89,20 @@ const defaultFormValues = ref<DefaultFormValues>({
     },
     location: {
         value: 1
-    }
+    },
+    quantity: 1,
+    basePrice: 100
 })
 
-const pricingRules = ref<PricingRules>({
-    categories: [
-        {id: 1, name: 'Электроника', type: 'markup', value: 5},
-        {id: 2, name: 'Мебель', type: 'discount', value: 10},
-        {id: 3, name: 'Одежда', type: 'none', value: 0},
-    ],
-    colors: [
-        {id: 1, name: 'Белый', type: 'none', value: 0},
-        {id: 2, name: 'Красный', type: 'markup', value: 3},
-        {id: 3, name: 'Черный', type: 'none', value: 0, options: [
-                {id: 1, name: 'S', type: 'none', value: 0},
-                {id: 2, name: 'M', type: 'markup', value: 4},
-                {id: 3, name: 'L', type: 'markup', value: 5},
-            ]
-        }
-    ],
-    locations: [
-        {id: 1, name: 'Киев', type: 'markup', value: 2},
-        {id: 2, name: 'Львов', type: 'discount', value: 3},
-        {id: 3, name: 'Одесса', type: 'none', value: 0}
-    ]
-})
+const result = ref<ReturnType<ReturnType<typeof usePriceCalculator>['calculatePrice']> | null>(null);
+
+const { calculatePrice } = usePriceCalculator();
+
+const handleCalculate = () => {
+    result.value = calculatePrice({
+        basePrice: defaultFormValues.value.basePrice,
+        city: defaultFormValues.value.location.value,
+        quantity: defaultFormValues.value.quantity,
+    });
+}
 </script>
