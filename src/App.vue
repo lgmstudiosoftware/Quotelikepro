@@ -96,7 +96,7 @@ const defaultFormValues = ref<DefaultFormValues>({
     basePrice: 100
 })
 
-const result = ref<ReturnType<ReturnType<typeof usePriceCalculator>['calculatePrice']> | null>(null);
+const result = ref(null);
 
 const { calculatePrice } = usePriceCalculator();
 
